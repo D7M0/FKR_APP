@@ -6,7 +6,7 @@ import 'package:new_app/Screens/Loginpage.dart';
 
 class Settings_page extends StatefulWidget {
   static const root = 'Settings_Page';
-  const Settings_page({super.key});
+  const Settings_page({Key? key});
  
   @override
   State<Settings_page> createState() => _Settings_pageState();
@@ -14,31 +14,52 @@ class Settings_page extends StatefulWidget {
 
 class _Settings_pageState extends State<Settings_page> {
   final _auth = FirebaseAuth.instance;
-  late User SingendInUser;
+  late User SignedInUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
-        title: Text('SignOut'),
-        actions: [
-          IconButton(onPressed: (){
-            GoogleSignIn googleSignIn = GoogleSignIn();
-            googleSignIn.disconnect();
-            _auth.signOut();
-            Navigator.pushNamed(context, Loginpage.root);
-          }, icon: Icon(Icons.close)),
-        ],
+      appBar: AppBar(
+        title: Text('Settings'),
         leading: BackButton(
-            onPressed: () {
-              Navigator.pushNamed(context, Start_page.root);
-            },
-          ),
+          onPressed: () {
+            Navigator.pushNamed(context, Start_page.root);
+          },
+        ),
       ),
-
-
-
-
-
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () async {
+              try {
+                GoogleSignIn googleSignIn = GoogleSignIn();
+                await googleSignIn.disconnect();
+                await _auth.signOut();
+                Navigator.pushNamed(context, Loginpage.root);
+              } catch (e) {
+                print('Error during logout: $e');
+                // Optionally, add a dialog or snackbar to inform the user of the error.
+                final snackBar = SnackBar(content: Text('Logout failed: $e'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            ),
+            child: Text(
+              'Logout',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
