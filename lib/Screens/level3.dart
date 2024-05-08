@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../constants.dart';  // Ensure this file defines the colors and other constants
 import '../models/question_models.dart';  // Ensure this file defines the Question class
 import '../widgets/question_widget.dart';  // Custom widget for displaying the question
-import '../widgets/next.dart';  // Custom widget for the Next button
 import '../widgets/options.dart';  // Custom widget for displaying options
 
 class Level3 extends StatefulWidget {

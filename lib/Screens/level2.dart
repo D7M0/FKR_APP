@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../models/question_models.dart';
 import '../widgets/question_widget.dart';
-import '../widgets/next.dart';
 import '../widgets/options.dart';
 
 class Level2 extends StatefulWidget {

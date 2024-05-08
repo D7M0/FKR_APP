@@ -6,6 +6,8 @@ import 'package:new_app/Screens/Level3.dart';
 import 'package:new_app/Screens/Level4.dart';
 import 'package:new_app/Screens/Level5.dart';
 import 'package:new_app/Screens/Level6.dart';
+import 'package:new_app/Widgets/level_button.dart';
+
 
 class Levels_Page extends StatefulWidget {
   static const root = 'Levels_page';
@@ -37,40 +39,27 @@ class _Levels_PageState extends State<Levels_Page> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLevelButton(1, () {
+              LevelButton(level: 1, onPressed: () {
                 Navigator.pushNamed(context, Level1.root);
               }),
-              _buildLevelButton(2, () {
+              LevelButton(level: 2, onPressed: () {
                 Navigator.pushNamed(context, Level2.root);
               }),
-              _buildLevelButton(3, () {
+              LevelButton(level: 3, onPressed: () {
                 Navigator.pushNamed(context, Level3.root);
               }),
-              _buildLevelButton(4, () {
+              LevelButton(level: 4, onPressed: () {
                 Navigator.pushNamed(context, Level4.root);
               }),
-              _buildLevelButton(5, () {
+              LevelButton(level: 5, onPressed: () {
                 Navigator.pushNamed(context, Level5.root);
               }),
-              _buildLevelButton(6, () {
+              LevelButton(level: 6, onPressed: () {
                 Navigator.pushNamed(context, Level6.root);
               }),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLevelButton(int level, VoidCallback onPressed) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          primary: Colors.lightBlue,
-        ),
-        child: Text('Level $level'),
       ),
     );
   }
