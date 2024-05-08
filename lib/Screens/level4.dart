@@ -1,9 +1,11 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import '../constants.dart';
-import '../models/question_models.dart';
-import '../widgets/question_widget.dart';
-import '../widgets/next.dart';
-import '../widgets/options.dart';
+import '../constants.dart';  // Ensure this file defines the colors and other constants
+import '../models/question_models.dart';  // Ensure this file defines the Question class
+import '../widgets/question_widget.dart';  // Custom widget for displaying the question
+import '../widgets/next.dart';  // Custom widget for the Next button
+import '../widgets/options.dart';  // Custom widget for displaying options
 
 class Level4 extends StatefulWidget {
   static const root = 'Level4';
@@ -14,43 +16,122 @@ class Level4 extends StatefulWidget {
 }
 
 class _Level4State extends State<Level4> {
-  List<Question> _questions = [
-Question(id: 1, title: '7+4=', options: {'10': false, '11': true, '12': false, '9': false}),
-Question(id: 2, title: '9x2=', options: {'18': true, '15': false, '24': false, '20': false}),
-Question(id: 3, title: '25-8=', options: {'6': false, '17': true, '9': false, '5': false}),
-Question(id: 4, title: '6x7=', options: {'42': true, '35': false, '48': false, '30': false}),
-Question(id: 5, title: '25+14=', options: {'39': false, '37': true, '29': false, '42': false}),
-Question(id: 6, title: '86-47=', options: {'19': true, '25': false, '18': false, '30': false}),
-Question(id: 7, title: '81+31=', options: {'114': false,'112': true, '109': false, '107': false}),
-Question(id: 8, title: '89-42=', options: {'43': false, '55': false, '38': false, '47': true}),
-Question(id: 9, title: '7x8=', options: { '42': false, '49': false, '64': false,'56': true}),
-Question(id: 10, title: '123+67=', options: { '134': false, '145': false,'190': true, '156': false}),
-  ];
-
+  List<Question> _questions = [];
   int counter = 0;
   bool clicked = false;
+  Timer? _timer;
+  int _timeRemaining = 10;
+  final Random _random = Random();
+  int score = 0;
 
-  void nextQuestion() {
-    if (counter == _questions.length - 1) {
-      return;
-    } else {
+  @override
+  void initState() {
+    super.initState();
+    _questions = List.generate(10, (index) => _generateQuestion(index + 1));
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Question _generateQuestion(int id) {
+    // Increase the range for numbers as the level progresses
+    int divisor = _random.nextInt(2 + id) + 1;  // Divisor scales with the question index
+    int quotient = _random.nextInt(10) + 1;  // Quotient remains manageable
+    int dividend = divisor * quotient;  // Ensures the division is clean with no remainder
+
+    int correctAnswer = quotient;
+    String questionTitle = '$dividend ÷ $divisor =';
+
+    Map<String, bool> options = _generateOptions(correctAnswer, divisor, quotient);
+
+    return Question(
+      id: id,
+      title: questionTitle,
+      options: options,
+    );
+  }
+
+  Map<String, bool> _generateOptions(int correctAnswer, int maxNumber, int quotient) {
+  Set<int> optionsSet = {correctAnswer};
+  int attempts = 0;  // Limit attempts to prevent infinite loops
+
+  while (optionsSet.length < 4 && attempts < 100) {
+    int deviation = _random.nextInt(maxNumber) - (maxNumber ~/ 2);
+    int fakeAnswer = correctAnswer + deviation;
+    if (fakeAnswer != correctAnswer && fakeAnswer > 0) {
+      optionsSet.add(fakeAnswer);
+    }
+    attempts++;  // Increment attempts
+  }
+
+  List<int> optionsList = optionsSet.toList()..shuffle(_random);
+  return Map.fromIterable(optionsList, key: (item) => item.toString(), value: (item) => item == correctAnswer);
+}
+
+  void _startTimer() {
+    _timeRemaining = 10;
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      if (_timeRemaining > 0) {
+        setState(() {
+          _timeRemaining--;
+        });
+      } else {
+        _timer?.cancel();
+        _showFinalScoreDialog();  // Show dialog when time runs out
+      }
+    });
+  }
+
+  void _nextQuestion() {
+    if (counter < _questions.length - 1) {
       setState(() {
         counter++;
         clicked = false;
+        _startTimer();
       });
+    } else {
+      _timer?.cancel();
+      _showFinalScoreDialog();  // Show dialog when reaching the last question
     }
   }
 
-  void colorChange() {
-    setState(() {
-      clicked = true;
-    });
+  void _showFinalScoreDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing the dialog by tapping outside it
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Congratulations!'),
+          content: Text('You got $score points.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();  // Close the dialog
+                Navigator.of(context).pop();  // Navigate back to the previous screen
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Level 4'),
+        backgroundColor: Colors.blue,
+        elevation: 0,
+      ),
       body: Container(
+        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/background.png'),
@@ -58,49 +139,49 @@ Question(id: 10, title: '123+67=', options: { '134': false, '145': false,'190': 
           ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppBar(
-              backgroundColor: background,
-              shadowColor: incorrect, // possible red
-              title: const Text(
-                'Level4',
-                style: TextStyle(color: Colors.white),
-              ), // APP NAME
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Time remaining: $_timeRemaining seconds'),
             ),
-            SizedBox(
-              width: double.infinity,
-              child: Column(
-                children: [
-                  QuestionWidget(
-                      question: _questions[counter].title,
-                      counterAction: counter,
-                      totalQuestions: _questions.length),
-                  const Divider(), // question widget
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  for (int i = 0; i < _questions[counter].options.length; i++)
-                    Options(
-                        option: _questions[counter].options.keys.toList()[i],
-                        color: clicked
-                            ? _questions[counter].options.values.toList()[i] == true
-                                ? correct
-                                : incorrect
-                            : Colors.white,
-                        onTap: colorChange),
-                ],
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Text('Score: $score'),
             ),
+            QuestionWidget(
+              question: _questions[counter].title,
+              counterAction: counter,
+              totalQuestions: _questions.length,
+            ),
+            const Divider(),
+            const SizedBox(height: 20),
+            ..._questions[counter].options.keys.map((option) {
+              bool isCorrect = _questions[counter].options[option] ?? false;
+              return Options(
+                option: option,
+                color: clicked ? (isCorrect ? correct : incorrect) : Colors.white,
+                onTap: () {
+                  if (!clicked) {
+                    setState(() {
+                      clicked = true;
+                      if (isCorrect) {
+                        score += 1;
+                      }
+                    });
+                  }
+                }
+              );
+            }).toList(),
           ],
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 9.0),
-        child: Next(
-          nextQuestion: nextQuestion,
-        ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _nextQuestion,
+        icon: Icon(Icons.navigate_next),
+        label: Text('Next Question'),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, // error possible
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
