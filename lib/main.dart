@@ -30,8 +30,8 @@ Future<void> _initializeAchievements() async {
   final achievements = await localStorageService.loadAchievements();
   if (achievements.isEmpty) {
     final initialAchievements = [
-      Achievement(title: "First Win", description: "Win your first game", isUnlocked: true),
-      Achievement(title: "Math Master", description: "Solve 100 problems", isUnlocked: false),
+      Achievement(title: "First Win", description: "Win your first level", isUnlocked: false),
+      Achievement(title: "Math Master", description: "Solve All levels", isUnlocked: false),
       Achievement(title: "Speedster", description: "Solve a problem in under 3 seconds", isUnlocked: false),
     ];
     await localStorageService.saveAchievements(initialAchievements);
