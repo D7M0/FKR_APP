@@ -17,7 +17,7 @@ class LevelButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          primary: Colors.lightBlue,
+          backgroundColor: Colors.lightBlue, // Updated property
         ),
         child: Text('Level $level'),
       ),

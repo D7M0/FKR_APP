@@ -50,7 +50,7 @@ class _Settings_pageState extends State<Settings_page> {
               }
             },
             style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
+              backgroundColor: Colors.blue, // Updated property
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             ),
             child: Text(

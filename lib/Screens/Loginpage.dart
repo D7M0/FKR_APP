@@ -85,6 +85,7 @@ class _LoginpageState extends State<Loginpage> {
               MaterialButton(
                 onPressed: () {
                   signInWithGoogle();
+                  Navigator.pushNamed(context, Start_page.root);
                 },
                 height: 50,
                 color: Colors.red,
