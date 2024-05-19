@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:new_app/Screens/Achievements.dart';
 import 'package:new_app/Screens/Levels_page.dart';
 import 'package:new_app/Widgets/Mybutton.dart';
 import 'package:new_app/Screens/Settings_page.dart';
@@ -70,7 +71,9 @@ class _Start_pageState extends State<Start_page> {
               ),
               Mybutton(
                 color: Colors.lightBlue,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, Achievements.root);
+                },
                 title: "Achievements",
               ),
             ],
