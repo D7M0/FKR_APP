@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'Screens/Achievements.dart';
 import 'Screens/Levels_page.dart';
 import 'Screens/Registration_Page.dart';
@@ -17,12 +18,22 @@ import 'Screens/LoginPage.dart';
 import 'firebase_options.dart';
 import 'services/local_storage_service.dart';
 import 'models/achievement.dart';
+import 'package:new_app/Screens/BackgroundMusicManager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await _initializeAchievements();
-  runApp(MyApp());
+
+  final backgroundMusicManager = BackgroundMusicManager();
+  await backgroundMusicManager.play();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => backgroundMusicManager,
+      child: MyApp(),
+    ),
+  );
 }
 
 Future<void> _initializeAchievements() async {
